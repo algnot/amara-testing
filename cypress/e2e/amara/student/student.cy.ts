@@ -15,7 +15,7 @@ const getStudentId = (): Promise<string> => {
 };
 
 describe('test student', () => {
-    it('should alert with no sale person', () => {
+    it('should error with no sale person', () => {
         const studentData = generateRandomStudentData()
 
         cy.visit(Cypress.env('UI_ENDPOINT'))

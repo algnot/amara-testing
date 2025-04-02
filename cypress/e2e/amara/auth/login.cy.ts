@@ -6,7 +6,7 @@ describe('test login', () => {
     cy.url().should('include', '/login')
   })
 
-  it('should alert with not found user', () => {
+  it('should error with not found user', () => {
     cy.visit(Cypress.env('UI_ENDPOINT') + '/login')
     cy.get('input[type="email"]').type('wrong@email.com')
     cy.get('input[type="password"]').type('wrongpassword')
@@ -14,7 +14,7 @@ describe('test login', () => {
     cy.get('[role="alertdialog"]').should('be.visible').should('contain', 'user with email wrong@email.com not found')
   })
 
-  it('should alert with wrong password', () => {
+  it('should error with wrong password', () => {
     cy.visit(Cypress.env('UI_ENDPOINT') + '/login')
     cy.get('input[type="email"]').type(Cypress.env('SUPER_ADMIN_EMAIL'))
     cy.get('input[type="password"]').type('wrongpassword')
