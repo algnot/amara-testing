@@ -1,0 +1,19 @@
+{
+  "name": "tongla-automate",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "dev": "cypress open"
+  },
+  "license": "tongla",
+  "devDependencies": {
+    "@tsconfig/node18": "^18.2.4",
+    "cypress": "^14.2.1",
+    "typescript": "^5.8.2"
+  },
+  "dependencies": {
+    "@faker-js/faker": "^9.6.0",
+    "@types/mocha": "^10.0.10",
+    "dotenv": "^16.4.7"
+  }
+}

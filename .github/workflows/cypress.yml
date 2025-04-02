@@ -1,0 +1,39 @@
+name: Testing
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  cypress-run:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Set environment variables
+        run: |
+          echo "CYPRESS_UI_ENDPOINT=${{ secrets.CYPRESS_UI_ENDPOINT }} >> $GITHUB_ENV
+          echo "CYPRESS_SUPER_ADMIN_EMAIL=${{ secrets.CYPRESS_SUPER_ADMIN_EMAIL }}" >> $GITHUB_ENV
+          echo "CYPRESS_SUPER_ADMIN_PASSWORD=${{ secrets.CYPRESS_SUPER_ADMIN_PASSWORD }}" >> $GITHUB_ENV
+
+      - name: Run Cypress tests
+        run: npx cypress run
+
+      - name: Upload test artifacts
+        if: failure()
+        uses: actions/upload-artifact@v3
+        with:
+          name: cypress-artifacts
+          path: |
+            cypress/videos
+            cypress/screenshots
