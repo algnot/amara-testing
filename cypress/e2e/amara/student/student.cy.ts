@@ -50,7 +50,7 @@ describe('test student', () => {
         });
     });
 
-    it.only('should error with duplicate student', async () => {
+    it('should error with duplicate student', async () => {
         cy.visit(Cypress.env('UI_ENDPOINT'));
         cy.get('input[placeholder="ชื่อนักเรียน (ภาษาไทย)"]').type("ศิริวรรณ");
         cy.get('input[placeholder="นามสกุลนักเรียน (ภาษาไทย)"]').type("หนอกค้างพลู");
