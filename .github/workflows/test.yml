@@ -29,13 +29,21 @@ jobs:
       - name: Run Cypress tests
         run: npx cypress run --reporter cypress-mochawesome-reporter
 
-      - name: List generated report files
+      - name: Prepare report folder
         if: always()
-        run: ls -R cypress/reports/html
+        run: |
+          mkdir -p deploy/${{ github.sha }}
+          cp -r cypress/reports/html/* deploy/${{ github.sha }}
 
-      - name: Deploy report to GitHub Pages
+      - name: Deploy to GitHub Pages
         if: always()
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./cypress/reports/html
+          publish_dir: ./deploy
+          destination_dir: .
+      
+      - name: Log report URL
+        if: always()
+        run: | 
+          enho "report URL: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/${{ github.sha }}/"
