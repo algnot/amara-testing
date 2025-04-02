@@ -1,11 +1,11 @@
-name: Testing
+name: Test
 
 on:
   push:
     branches: [main]
 
 jobs:
-  Testing:
+  Test:
     runs-on: ubuntu-latest
 
     steps:
@@ -35,12 +35,10 @@ jobs:
         with:
           name: cypress-artifacts
           path: |
-            cypress/videos
-            cypress/screenshots
             cypress/reports/html
 
   Report:
-    needs: Testing
+    needs: Test
     runs-on: ubuntu-latest
     if: always()
 
@@ -58,4 +56,4 @@ jobs:
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./cypress-artifacts/cypress/reports/html
+          publish_dir: ./cypress-artifacts/reports/html
