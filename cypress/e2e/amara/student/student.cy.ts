@@ -50,6 +50,19 @@ describe('test student', () => {
         });
     });
 
+    it.only('should error with duplicate student', async () => {
+        cy.visit(Cypress.env('UI_ENDPOINT'));
+        cy.get('input[placeholder="ชื่อนักเรียน (ภาษาไทย)"]').type("ศิริวรรณ");
+        cy.get('input[placeholder="นามสกุลนักเรียน (ภาษาไทย)"]').type("หนอกค้างพลู");
+        cy.get('input[placeholder="ชื่อนักเรียน (ภาษาอังกฤษ)"]').type("Sirivan");
+        cy.get('input[placeholder="นามสกุลนักเรียน (ภาษาอังกฤษ)"]').type("Nuokkhangplu");
+        cy.get('input[placeholder="รหัส CS"]').type("auto888");
+        cy.get('button[type="submit"]').click();
+
+        cy.get('[role="alertdialog"]').should('contain', 'ข้อมูลนักเรียน ศิริวรรณ หนอกค้างพลู (Sirivan Nuokkhangplu) มีอยู่แล้วในระบบ รหัสนักเรียน 250400119 ไม่สามารถสร้างซ้ำได้');
+    });
+
+
     it('should find student in dashboard using stored data', () => {
         loginAndGoToDashboard();
         const student = Cypress.env('STUDENT_DATA');
