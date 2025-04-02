@@ -18,7 +18,6 @@ jobs:
       - name: Clone this repo
         run: |
           git clone https://github.com/algnot/amara-testing.git test-repo
-          cd test-repo
 
       - name: Set up Node.js
         uses: actions/setup-node@v3
@@ -26,7 +25,9 @@ jobs:
           node-version: 18
 
       - name: Install dependencies
-        run: npm ci
+        run: |
+            cd test-repo 
+            npm ci
 
       - name: Set Cypress env
         run: |
