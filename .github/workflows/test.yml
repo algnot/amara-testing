@@ -1,11 +1,11 @@
-name: Test
+name: Test and Report
 
 on:
   push:
     branches: [main]
 
 jobs:
-  Test:
+  test-and-report:
     runs-on: ubuntu-latest
 
     steps:
@@ -29,34 +29,13 @@ jobs:
       - name: Run Cypress tests
         run: npx cypress run --reporter cypress-mochawesome-reporter
 
-      - name: Upload test artifacts
+      - name: List generated report files
         if: always()
-        uses: actions/upload-artifact@v4.6.2
-        with:
-          name: cypress-artifacts
-          path: |
-            cypress/reports/html
+        run: ls -R cypress/reports/html
 
-  Report:
-    needs: Test
-    runs-on: ubuntu-latest
-    if: always()
-
-    steps:
-      - name: Checkout repo
-        uses: actions/checkout@v3
-
-      - name: Download test artifacts
-        uses: actions/download-artifact@v4.1.4
-        with:
-          name: cypress-artifacts
-          path: cypress-artifacts
-      
-      - name: List files to verify
-        run: ls -R ./cypress-artifacts
-
-      - name: Deploy to GitHub Pages
+      - name: Deploy report to GitHub Pages
+        if: always()
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./cypress-artifacts/cypress/reports/html
+          publish_dir: ./cypress/reports/html
