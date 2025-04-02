@@ -1,0 +1,68 @@
+name: Test and Report
+
+on:
+  workflow_call:
+    inputs:
+      commit_sha:
+        required: true
+        type: string
+      repo_url:
+        required: true
+        type: string
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout test repo
+        uses: actions/checkout@v3
+
+      - name: Clone frontend repo at specific commit
+        run: |
+          git clone ${{ inputs.repo_url }} frontend
+          cd frontend
+          git checkout ${{ inputs.commit_sha }}
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Set Cypress env
+        run: |
+          echo "CYPRESS_UI_ENDPOINT=${{ secrets.CYPRESS_UI_ENDPOINT }}" >> $GITHUB_ENV
+          echo "CYPRESS_SUPER_ADMIN_EMAIL=${{ secrets.CYPRESS_SUPER_ADMIN_EMAIL }}" >> $GITHUB_ENV
+          echo "CYPRESS_SUPER_ADMIN_PASSWORD=${{ secrets.CYPRESS_SUPER_ADMIN_PASSWORD }}" >> $GITHUB_ENV
+
+      - name: Run Cypress tests
+        run: npx cypress run --reporter cypress-mochawesome-reporter
+
+      - name: Prepare report
+        if: always()
+        run: |
+          mkdir -p deploy/${{ inputs.commit_sha }}
+          cp -r cypress/reports/html/* deploy/${{ inputs.commit_sha }}
+
+      - name: Clean old reports
+        if: always()
+        run: |
+          cd deploy
+          ls -1dt */ | tail -n +51 | xargs -d '\n' rm -rf --
+
+      - name: Deploy to GitHub Pages
+        if: always()
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./deploy
+          destination_dir: .
+          keep_files: true
+
+      - name: Print Report URL
+        if: always()
+        run: |
+          echo "report URL: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/${{ inputs.commit_sha }}/"
