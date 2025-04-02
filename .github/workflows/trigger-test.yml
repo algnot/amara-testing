@@ -6,23 +6,14 @@ on:
       commit_sha:
         required: true
         type: string
-      repo_url:
-        required: true
-        type: string
 
 jobs:
   test:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout test repo
+      - name: Checkout
         uses: actions/checkout@v3
-
-      - name: Clone frontend repo at specific commit
-        run: |
-          git clone ${{ inputs.repo_url }} frontend
-          cd frontend
-          git checkout ${{ inputs.commit_sha }}
 
       - name: Set up Node.js
         uses: actions/setup-node@v3
