@@ -36,13 +36,14 @@ jobs:
           echo "CYPRESS_SUPER_ADMIN_PASSWORD=${{ secrets.CYPRESS_SUPER_ADMIN_PASSWORD }}" >> $GITHUB_ENV
 
       - name: Run Cypress tests
+        working-directory: ./test-repo
         run: npx cypress run --reporter cypress-mochawesome-reporter
 
       - name: Prepare report
         if: always()
         run: |
           mkdir -p deploy/${{ inputs.commit_sha }}
-          cp -r cypress/reports/html/* deploy/${{ inputs.commit_sha }}
+          cp -r test-repo/cypress/reports/html/* deploy/${{ inputs.commit_sha }}
 
       - name: Clean old reports
         if: always()
