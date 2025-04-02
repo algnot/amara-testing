@@ -15,6 +15,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
+      - name: Clone this repo
+        run: |
+          git clone https://github.com/algnot/amara-testing.git test-repo
+          cd test-repo
+
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
