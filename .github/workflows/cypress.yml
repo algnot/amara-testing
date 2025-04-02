@@ -38,3 +38,24 @@ jobs:
             cypress/videos
             cypress/screenshots
             mochawesome-report
+
+  Reporting:
+    needs: Testing
+    runs-on: ubuntu-latest
+    if: always()
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Download test artifacts
+        uses: actions/download-artifact@v4.1.4
+        with:
+          name: cypress-artifacts
+          path: cypress-artifacts
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./cypress-artifacts/mochawesome-report
