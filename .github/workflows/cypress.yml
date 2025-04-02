@@ -27,7 +27,7 @@ jobs:
           echo "CYPRESS_SUPER_ADMIN_PASSWORD=${{ secrets.CYPRESS_SUPER_ADMIN_PASSWORD }}" >> $GITHUB_ENV
 
       - name: Run Cypress tests
-        run: npx cypress run
+        run: npx cypress run --reporter cypress-mochawesome-reporter
 
       - name: Upload test artifacts
         if: always()
@@ -37,3 +37,4 @@ jobs:
           path: |
             cypress/videos
             cypress/screenshots
+            mochawesome-report
