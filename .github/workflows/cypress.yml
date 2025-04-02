@@ -22,7 +22,7 @@ jobs:
 
       - name: Set environment variables
         run: |
-          echo "CYPRESS_UI_ENDPOINT=${{ secrets.CYPRESS_UI_ENDPOINT }} >> $GITHUB_ENV
+          echo "CYPRESS_UI_ENDPOINT=${{ secrets.CYPRESS_UI_ENDPOINT }}" >> $GITHUB_ENV
           echo "CYPRESS_SUPER_ADMIN_EMAIL=${{ secrets.CYPRESS_SUPER_ADMIN_EMAIL }}" >> $GITHUB_ENV
           echo "CYPRESS_SUPER_ADMIN_PASSWORD=${{ secrets.CYPRESS_SUPER_ADMIN_PASSWORD }}" >> $GITHUB_ENV
 
