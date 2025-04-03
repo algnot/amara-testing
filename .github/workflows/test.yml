@@ -60,11 +60,9 @@ jobs:
         run: |
           STATUS="${{ job.status }}"
           REPORT_URL="https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/${{ github.sha }}/"
-          MESSAGE="**✅ Cypress Test Result: \`${STATUS}\`**
-                    🔗 [View Test Report](${REPORT_URL})
-                    📦 Repo: \`${{ github.repository }}\`
-                    🔁 Commit: \`${{ github.sha }}\`"
-                              curl -H "Content-Type: application/json" \
-                                  -X POST \
-                                  -d "{\"content\": \"$MESSAGE\"}" \
-                                  ${{ secrets.DISCORD_WEBHOOK_URL }}
+          MESSAGE="**✅ Cypress Test Result: \`${STATUS}\`**\n🔗 [View Test Report](${REPORT_URL})\n📦 Repo: \`${{ github.repository }}\`\n🔁 Commit: \`${{ github.sha }}\`"
+
+          curl -H "Content-Type: application/json" \
+                -X POST \
+                -d "{\"content\": \"$MESSAGE\"}" \
+                ${{ secrets.DISCORD_WEBHOOK_URL }}
