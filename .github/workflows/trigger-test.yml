@@ -64,3 +64,15 @@ jobs:
         if: always()
         run: |
           echo "report URL: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/${{ inputs.commit_sha }}/"
+
+      - name: Notify Discord with test result
+        if: always()
+        run: |
+          STATUS="${{ job.status }}"
+          REPORT_URL="https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/${{ inputs.commit_sha }}/"
+          MESSAGE="**Cypress Test Result: \`${STATUS}\`**\n🔗 [View Test Report](${REPORT_URL})\n📦 Repo: \`${{ github.event.repository.name }}\`\n🔁 Commit: \`${{ inputs.commit_sha }}\`"
+
+          curl -H "Content-Type: application/json" \
+                -X POST \
+                -d "{\"content\": \"$MESSAGE\"}" \
+                ${{ secrets.DISCORD_WEBHOOK_URL }}
