@@ -1,5 +1,7 @@
 import { loginAndGoToDashboard } from "@/cypress/util/auth"
 import { generateRandomStudentData } from "@/cypress/util/data"
+import { getAndExpectContain, getAndType, getInputByLabelAndExpect } from "@/cypress/util/helper";
+import { get } from "cypress/types/lodash";
 
 const getStudentId = (): Promise<string> => {
     return new Promise((resolve) => {
@@ -19,31 +21,32 @@ describe('test student', () => {
         const studentData = generateRandomStudentData()
 
         cy.visit(Cypress.env('UI_ENDPOINT'))
-        cy.get('input[placeholder="ชื่อนักเรียน (ภาษาไทย)"]').type(studentData.firstNameTH)
-        cy.get('input[placeholder="นามสกุลนักเรียน (ภาษาไทย)"]').type(studentData.lastNameTH)
-        cy.get('input[placeholder="ชื่อนักเรียน (ภาษาอังกฤษ)"]').type(studentData.firstNameEN)
-        cy.get('input[placeholder="นามสกุลนักเรียน (ภาษาอังกฤษ)"]').type(studentData.lastNameEN)
-        cy.get('input[placeholder="รหัส CS"]').type("auto888auto888auto888auto888auto888auto888")
+        getAndType('input[placeholder="ชื่อนักเรียน (ภาษาไทย)"]', studentData.firstNameTH)
+        getAndType('input[placeholder="นามสกุลนักเรียน (ภาษาไทย)"]', studentData.lastNameTH)
+        getAndType('input[placeholder="ชื่อนักเรียน (ภาษาอังกฤษ)"]', studentData.firstNameEN)
+        getAndType('input[placeholder="นามสกุลนักเรียน (ภาษาอังกฤษ)"]', studentData.lastNameEN)
+        getAndType('input[placeholder="รหัส CS"]', "auto888auto888auto888auto888auto888auto888")
+
         cy.get('button[type="submit"]').click()
-        cy.get('[role="alertdialog"]').should('be.visible').and('contain', 'ไม่พบรหัส CS นี้ในระบบ')
+        getAndExpectContain('[role="alertdialog"]', ['ผิดพลาด', 'ไม่พบรหัส CS นี้ในระบบ'])
     })
 
     it('should success with new student', async () => {
         const studentData = generateRandomStudentData();
         cy.visit(Cypress.env('UI_ENDPOINT'));
-        cy.get('input[placeholder="ชื่อนักเรียน (ภาษาไทย)"]').type(studentData.firstNameTH);
-        cy.get('input[placeholder="นามสกุลนักเรียน (ภาษาไทย)"]').type(studentData.lastNameTH);
-        cy.get('input[placeholder="ชื่อนักเรียน (ภาษาอังกฤษ)"]').type(studentData.firstNameEN);
-        cy.get('input[placeholder="นามสกุลนักเรียน (ภาษาอังกฤษ)"]').type(studentData.lastNameEN);
-        cy.get('input[placeholder="รหัส CS"]').type("auto888");
+
+        getAndType('input[placeholder="ชื่อนักเรียน (ภาษาไทย)"]', studentData.firstNameTH);
+        getAndType('input[placeholder="นามสกุลนักเรียน (ภาษาไทย)"]', studentData.lastNameTH);
+        getAndType('input[placeholder="ชื่อนักเรียน (ภาษาอังกฤษ)"]', studentData.firstNameEN);
+        getAndType('input[placeholder="นามสกุลนักเรียน (ภาษาอังกฤษ)"]', studentData.lastNameEN);
+        getAndType('input[placeholder="รหัส CS"]', "auto888");
         cy.get('button[type="submit"]').click();
 
-        cy.get('[role="alertdialog"]').should('be.visible').and('contain', 'ระบบลงทะเบียนให้คุณเรียบร้อยแล้ว');
+        getAndExpectContain('[role="alertdialog"]', ['ลงทะเบียนสำเร็จ', 'ระบบลงทะเบียนให้คุณเรียบร้อยแล้ว'])
         cy.contains('button', 'ยืนยัน').click();
         cy.url().should('include', '/student/');
 
         const studentId = await getStudentId();
-
         Cypress.env('STUDENT_DATA', {
             ...studentData,
             id: studentId,
@@ -52,14 +55,15 @@ describe('test student', () => {
 
     it('should error with duplicate student', async () => {
         cy.visit(Cypress.env('UI_ENDPOINT'));
-        cy.get('input[placeholder="ชื่อนักเรียน (ภาษาไทย)"]').type("ศิริวรรณ");
-        cy.get('input[placeholder="นามสกุลนักเรียน (ภาษาไทย)"]').type("หนอกค้างพลู");
-        cy.get('input[placeholder="ชื่อนักเรียน (ภาษาอังกฤษ)"]').type("Sirivan");
-        cy.get('input[placeholder="นามสกุลนักเรียน (ภาษาอังกฤษ)"]').type("Nuokkhangplu");
-        cy.get('input[placeholder="รหัส CS"]').type("auto888");
+
+        getAndType('input[placeholder="ชื่อนักเรียน (ภาษาไทย)"]', 'ศิริวรรณ');
+        getAndType('input[placeholder="นามสกุลนักเรียน (ภาษาไทย)"]', 'หนอกค้างพลู');
+        getAndType('input[placeholder="ชื่อนักเรียน (ภาษาอังกฤษ)"]', 'Sirivan');
+        getAndType('input[placeholder="นามสกุลนักเรียน (ภาษาอังกฤษ)"]', 'Nuokkhangplu');
+        getAndType('input[placeholder="รหัส CS"]', "auto888");
         cy.get('button[type="submit"]').click();
 
-        cy.get('[role="alertdialog"]').should('contain', 'ข้อมูลนักเรียน ศิริวรรณ หนอกค้างพลู (Sirivan Nuokkhangplu) มีอยู่แล้วในระบบ รหัสนักเรียน 250400119 ไม่สามารถสร้างซ้ำได้');
+        getAndExpectContain('[role="alertdialog"]', ['ผิดพลาด', 'ข้อมูลนักเรียน ศิริวรรณ หนอกค้างพลู (Sirivan Nuokkhangplu) มีอยู่แล้วในระบบ รหัสนักเรียน 250400119 ไม่สามารถสร้างซ้ำได้'])
     });
 
 
@@ -69,34 +73,16 @@ describe('test student', () => {
         expect(student).to.exist;
         expect(student.id, 'Student ID should be defined').to.exist;
 
-        console.log(student);
-
-        cy.get('input[placeholder="ค้นหา"]').type(student.id, { delay: 100 });
+        getAndType('input[placeholder="ค้นหา"]', student.id);
         cy.wait(1000);
 
         cy.contains('td', student.id)
             .should('be.visible')
             .parent('tr')
             .click();
-
-        cy.contains('label', 'ชื่อ (ไทย)')
-            .parent()
-            .find('input')
-            .should('have.value', student.firstNameTH);
-
-        cy.contains('label', 'นามสกุล (ไทย)')
-            .parent()
-            .find('input')
-            .should('have.value', student.lastNameTH);
-
-        cy.contains('label', 'ชื่อ (อังกฤษ)')
-            .parent()
-            .find('input')
-            .should('have.value', student.firstNameEN);
-
-        cy.contains('label', 'นามสกุล (อังกฤษ)')
-            .parent()
-            .find('input')
-            .should('have.value', student.lastNameEN);
+        getInputByLabelAndExpect('ชื่อ (ไทย)', student.firstNameTH);
+        getInputByLabelAndExpect('นามสกุล (ไทย)', student.lastNameTH);
+        getInputByLabelAndExpect('ชื่อ (อังกฤษ)', student.firstNameEN);
+        getInputByLabelAndExpect('นามสกุล (อังกฤษ)', student.lastNameEN);
     });
 })

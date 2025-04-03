@@ -34,7 +34,7 @@ jobs:
         run: |
           mkdir -p deploy/${{ github.sha }}
           cp -r cypress/reports/html/* deploy/${{ github.sha }}
-      
+
       - name: Clean old reports
         if: always()
         run: |
@@ -49,8 +49,23 @@ jobs:
           publish_dir: ./deploy
           destination_dir: .
           keep_files: true
-  
+
       - name: Report URL
         if: always()
-        run: | 
+        run: |
           echo "report URL: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/${{ github.sha }}/"
+
+      - name: Notify Discord with test result
+        if: always()
+        run: |
+          STATUS="${{ job.status }}"
+          REPORT_URL="https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/${{ github.sha }}/"
+          MESSAGE="**✅ Cypress Test Result: \`${STATUS}\`**
+                    🔗 [View Test Report](${REPORT_URL})
+                    📦 Repo: \`${{ github.repository }}\`
+                    🔁 Commit: \`${{ github.sha }}\`"
+
+                              curl -H "Content-Type: application/json" \
+                                  -X POST \
+                                  -d "{\"content\": \"$MESSAGE\"}" \
+                                  ${{ secrets.DISCORD_WEBHOOK_URL }}

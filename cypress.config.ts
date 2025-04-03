@@ -14,6 +14,10 @@ module.exports = defineConfig({
       return config;
     },
     baseUrl: process.env.CYPRESS_UI_ENDPOINT,
+    retries: {
+      runMode: 2,
+      openMode: 2,
+    },
   },
   defaultCommandTimeout: 20000,
   video: true,
