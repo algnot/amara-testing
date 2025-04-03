@@ -64,7 +64,6 @@ jobs:
                     🔗 [View Test Report](${REPORT_URL})
                     📦 Repo: \`${{ github.repository }}\`
                     🔁 Commit: \`${{ github.sha }}\`"
-
                               curl -H "Content-Type: application/json" \
                                   -X POST \
                                   -d "{\"content\": \"$MESSAGE\"}" \
