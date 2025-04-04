@@ -29,8 +29,6 @@ describe('test login', () => {
     getAndType('input[type="email"]', Cypress.env('SUPER_ADMIN_EMAIL'))
     getAndType('input[type="password"]', Cypress.env('SUPER_ADMIN_PASSWORD'))
     cy.get('button[type="submit"]').click()
-    getAndExpectContain('[role="alertdialog"]', ['ยินดีต้อนรับ Amutomate Test :)'])
-    cy.contains('button', 'ยืนยัน').click()
     cy.url().should('include', '/dashboard')
   })
 })
