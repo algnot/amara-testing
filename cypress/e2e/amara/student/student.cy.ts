@@ -1,9 +1,8 @@
 import { loginAndGoToDashboard } from "@/cypress/util/auth"
 import { generateRandomStudentData } from "@/cypress/util/data"
 import { getAndExpectContain, getAndType, getInputByLabelAndExpect } from "@/cypress/util/helper";
-import { get } from "cypress/types/lodash";
 
-const getStudentId = (): Promise<string> => {
+export const getStudentId = (): Promise<string> => {
     return new Promise((resolve) => {
         cy.contains('label', 'รหัสนักเรียน')
             .parent()
