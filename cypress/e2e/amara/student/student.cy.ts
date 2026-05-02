@@ -68,6 +68,7 @@ describe('test student', () => {
 
     it('should find student in dashboard using stored data', () => {
         loginAndGoToDashboard();
+        cy.visit(Cypress.env('UI_ENDPOINT') + '/dashboard/student')
         const student = Cypress.env('STUDENT_DATA');
         expect(student).to.exist;
         expect(student.id, 'Student ID should be defined').to.exist;
