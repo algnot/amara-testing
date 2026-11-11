@@ -36,13 +36,21 @@ describe("test draft certificate with auth", () => {
     cy.visit(Cypress.env("UI_ENDPOINT") + "/certificate");
     getAndType('input[placeholder="รหัสนักเรียน"]', student.id);
 
+    cy.intercept("GET", `**/student/get/${student.id}`).as("studentData");
     cy.get('button[type="submit"]').click();
+    cy.wait("@studentData").its("response.statusCode").should("eq", 200);
     cy.url().should("include", `/certificate/${student.id}`);
+    cy.get('input[placeholder="รหัสนักเรียน"]').should("have.value", student.id);
 
     cy.contains("button", "ขอใบประกาศ").click();
     getAndExpectContain('[role="alertdialog"]', [
-      "กรุณาใส่ข้อมูลต่อไปนี้ start_date, end_date",
+      "กรุณาใส่ข้อมูลต่อไปนี้",
+      "start_date",
+      "end_date",
     ]);
+    cy.get('[role="alertdialog"]').should(($dialog) => {
+      expect($dialog.text()).to.not.include("student_id");
+    });
   });
 
   it("should create draft certificate", () => {
